@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Entrar — Mercado Express</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/}">Mercado Express</a>
+    <nav>
+        <a th:href="@{/mercado}">Catálogo</a>
+        <a th:href="@{/cadastro}">Cadastre-se</a>
+    </nav>
+</header>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>Entrar</h2>
+        <p class="subtitle">Acesse sua conta do Mercado Express</p>
+
+        <!-- Esta é a nossa página de login própria: o Spring Security está
+             configurado (SecurityConfig.loginPage("/login")) para usar esta
+             tela no lugar da página padrão gerada automaticamente. -->
+
+        <div class="alert alert-success" th:if="${param.logout}">
+            Você saiu da sua conta com sucesso.
+        </div>
+        <div class="alert alert-success" th:if="${cadastroSucesso}" th:text="${cadastroSucesso}"></div>
+        <div class="alert alert-error" th:if="${param.error}">
+            Email ou senha inválidos.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input type="email" id="username" name="username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Entrar</button>
+        </form>
+
+        <div class="auth-footer">
+            Ainda não tem conta? <a th:href="@{/cadastro}">Cadastre-se aqui</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

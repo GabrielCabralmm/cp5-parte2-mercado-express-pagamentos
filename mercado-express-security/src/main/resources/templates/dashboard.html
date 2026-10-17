@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard da gerência — Mercado Express</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/}">Mercado Express</a>
+    <nav>
+        <a th:href="@{/mercado}">Catálogo</a>
+        <a th:href="@{/admin}">Painel admin</a>
+        <a th:href="@{/admin/dashboard}">Dashboard</a>
+        <form class="logout-form" th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-link">Sair</button>
+        </form>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="page-title">
+        <h1>Dashboard da gerência</h1>
+        <span class="role-badge role-admin">Admin</span>
+    </div>
+
+    <!-- Dashboard final da gerencia (CP5 Parte 2): compras realizadas e
+         graficos de vendas, lucro e estoque. -->
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" th:text="${totalCompras}">0</div>
+            <div class="stat-label">Pedidos de compra (total)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${totalConfirmadas}">0</div>
+            <div class="stat-label">Compras confirmadas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${'R$ ' + #numbers.formatDecimal(totalVendido, 1, 2)}">R$ 0,00</div>
+            <div class="stat-label">Total vendido</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${'R$ ' + #numbers.formatDecimal(lucroTotal, 1, 2)}">R$ 0,00</div>
+            <div class="stat-label">Lucro total</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;">Vendas por produto</h3>
+        <canvas id="chartVendas" height="90"></canvas>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;">Lucro por produto</h3>
+        <canvas id="chartLucro" height="90"></canvas>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;">Estoque atual por produto</h3>
+        <canvas id="chartEstoque" height="90"></canvas>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;">Compras realizadas</h3>
+        <div th:if="${#lists.isEmpty(compras)}" class="empty-state">
+            Nenhuma compra registrada ainda.
+        </div>
+        <table th:unless="${#lists.isEmpty(compras)}">
+            <thead>
+            <tr>
+                <th>Pedido</th>
+                <th>Produto</th>
+                <th>Comprador</th>
+                <th>Quantidade</th>
+                <th>Valor total</th>
+                <th>Status</th>
+                <th>Data</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="compra : ${compras}">
+                <td th:text="${'#' + compra.id}">#1</td>
+                <td th:text="${compra.produto.nome}">Produto</td>
+                <td th:text="${compra.nomeComprador}">Comprador</td>
+                <td th:text="${compra.quantidade}">1</td>
+                <td th:text="${'R$ ' + #numbers.formatDecimal(compra.valorTotal, 1, 2)}">R$ 0,00</td>
+                <td>
+                    <span class="status-badge"
+                          th:classappend="${compra.status.name() == 'PENDENTE'} ? 'status-pendente' : (${compra.status.name() == 'CONFIRMADA'} ? 'status-confirmada' : 'status-recusada')"
+                          th:text="${compra.status}">PENDENTE</span>
+                </td>
+                <td th:text="${#temporals.format(compra.dataCompra, 'dd/MM/yyyy HH:mm')}">data</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="site-footer">
+    FIAP · TDS · Checkpoint 5 — Parte 2 · Mercado Express
+</footer>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const labelsVendas = /*[[${labelsVendas}]]*/ [];
+    const valoresVendas = /*[[${valoresVendas}]]*/ [];
+    const labelsLucro = /*[[${labelsLucro}]]*/ [];
+    const valoresLucro = /*[[${valoresLucro}]]*/ [];
+    const labelsEstoque = /*[[${labelsEstoque}]]*/ [];
+    const valoresEstoque = /*[[${valoresEstoque}]]*/ [];
+    /*]]>*/
+
+    const corForest = '#1B4B36';
+    const corAmber = '#F2A93B';
+
+    new Chart(document.getElementById('chartVendas'), {
+        type: 'bar',
+        data: {
+            labels: labelsVendas,
+            datasets: [{ label: 'Vendido (R$)', data: valoresVendas, backgroundColor: corForest }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    new Chart(document.getElementById('chartLucro'), {
+        type: 'bar',
+        data: {
+            labels: labelsLucro,
+            datasets: [{ label: 'Lucro (R$)', data: valoresLucro, backgroundColor: corAmber }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    new Chart(document.getElementById('chartEstoque'), {
+        type: 'bar',
+        data: {
+            labels: labelsEstoque,
+            datasets: [{ label: 'Estoque (unidades)', data: valoresEstoque, backgroundColor: '#5B6459' }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+</script>
+
+</body>
+</html>

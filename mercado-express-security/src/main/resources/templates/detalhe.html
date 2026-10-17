@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${produto.nome} + ' — Mercado Express'">Produto — Mercado Express</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/}">Mercado Express</a>
+    <nav>
+        <a th:href="@{/mercado}">Catálogo</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Entrar</a>
+        <a sec:authorize="isAuthenticated() and !hasRole('ADMIN')" th:href="@{/area}">Minha área</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Painel admin</a>
+        <form class="logout-form" th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-link">Sair</button>
+        </form>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="page-title">
+        <h1 th:text="${produto.nome}">Nome do produto</h1>
+    </div>
+
+    <div class="card">
+        <p><strong>Tipo:</strong> <span th:text="${produto.tipo}">-</span></p>
+        <p><strong>Setor:</strong> <span th:text="${produto.setor}">-</span></p>
+        <p><strong>Tamanho:</strong> <span th:text="${produto.tamanho}">-</span></p>
+        <p><strong>Preço:</strong>
+            <span th:text="${'R$ ' + #numbers.formatDecimal(produto.preco, 1, 2)}">R$ 0,00</span>
+        </p>
+    </div>
+
+    <a class="btn btn-secondary" th:href="@{/mercado}">Voltar ao catálogo</a>
+    <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary"
+       th:href="@{/mercado/{id}/editar(id=${produto.id})}">Editar produto</a>
+</div>
+
+<footer class="site-footer">
+    FIAP · TDS · Checkpoint 5 — Parte 1 · Mercado Express
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel administrativo — Mercado Express</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/}">Mercado Express</a>
+    <nav>
+        <a th:href="@{/mercado}">Catálogo</a>
+        <a th:href="@{/admin}">Painel admin</a>
+        <a th:href="@{/admin/dashboard}">Dashboard</a>
+        <form class="logout-form" th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-link">Sair</button>
+        </form>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="page-title">
+        <h1>Painel administrativo</h1>
+        <span class="role-badge role-admin">Admin</span>
+    </div>
+
+    <!-- Esta é a tela de ACESSO RESTRITO (exclusiva para ROLE_ADMIN) para a
+         qual um administrador é redirecionado automaticamente após o login
+         (RoleBasedAuthSuccessHandler) - diferente da tela de um usuário
+         comum (area.html). -->
+
+    <p th:if="${admin != null}">
+        Bem-vindo(a), <strong th:text="${admin.nome}">Admin</strong>.
+    </p>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" th:text="${totalProdutos}">0</div>
+            <div class="stat-label">Produtos cadastrados</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${totalUsuarios}">0</div>
+            <div class="stat-label">Usuários cadastrados</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;">Gerenciar catálogo</h3>
+        <p>Como administrador, você tem acesso total ao CRUD de produtos: criar, editar e excluir.</p>
+        <a class="btn btn-secondary" th:href="@{/mercado}">Ir para o catálogo</a>
+        <a class="btn btn-primary" th:href="@{/mercado/novo}">+ Novo produto</a>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;">Dashboard da gerência</h3>
+        <p>Compras realizadas e gráficos de vendas, lucro e estoque (CP5 Parte 2).</p>
+        <a class="btn btn-primary" th:href="@{/admin/dashboard}">Abrir dashboard</a>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;">Usuários cadastrados</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Tipo</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${usuarios}">
+                <td th:text="${u.nome}">Nome</td>
+                <td th:text="${u.email}">email@exemplo.com</td>
+                <td>
+                    <span class="role-badge"
+                          th:classappend="${u.role == 'ADMIN'} ? 'role-admin' : 'role-user'"
+                          th:text="${u.role}">USER</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="site-footer">
+    FIAP · TDS · Checkpoint 5 — Parte 1 · Mercado Express
+</footer>
+
+</body>
+</html>

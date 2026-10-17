@@ -1,0 +1,61 @@
+server:
+  port: ${PORT:8084}
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: mercado-express-security
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        # Preserva exatamente a grafia (maiusculas/minusculas) definida nos
+        # @Table/@Column das entidades (ex.: "TDS_Sec_MVC_TB_Mercado"),
+        # ao inves de o Postgres converter tudo para minusculo.
+        globally_quoted_identifiers: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  thymeleaf:
+    cache: false
+
+  # RabbitMQ (CP5 Parte 2). Padrao aponta para o broker rodando via Docker
+  # localmente (rabbitmq:3-management), porta 5672, usuario/senha padrao "guest".
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+  # SMTP (CP5 Parte 2) - sandbox do Mailtrap, para o envio do e-mail de
+  # confirmacao de pagamento sem usar uma caixa de e-mail real.
+  mail:
+    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+    port: ${MAIL_PORT:2525}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# Credenciais do usuario ADMIN criado automaticamente na primeira inicializacao
+# (ver AdminSeeder). Podem ser sobrescritas por variaveis de ambiente.
+app:
+  admin:
+    email: ${ADMIN_EMAIL:admin@mercadoexpress.com}
+    password: ${ADMIN_PASSWORD:admin123}
+    nome: ${ADMIN_NOME:Administrador}
+  mail:
+    remetente: ${MAIL_REMETENTE:contato@mercadoexpress.com}

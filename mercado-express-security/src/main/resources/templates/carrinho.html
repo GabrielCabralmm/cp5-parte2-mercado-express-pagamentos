@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Carrinho — Mercado Express</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/}">Mercado Express</a>
+    <nav>
+        <a th:href="@{/mercado}">Catálogo</a>
+        <a th:href="@{/minhas-compras}">Minhas compras</a>
+        <form class="logout-form" th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-link">Sair</button>
+        </form>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="page-title">
+        <h1>Meu carrinho</h1>
+    </div>
+
+    <div class="alert alert-error" th:if="${mensagemErro}" th:text="${mensagemErro}"></div>
+
+    <div th:if="${#lists.isEmpty(itens)}" class="empty-state">
+        Seu carrinho está vazio. <a th:href="@{/mercado}">Ver catálogo</a>
+    </div>
+
+    <table th:unless="${#lists.isEmpty(itens)}">
+        <thead>
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Subtotal</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${itens}">
+            <td th:text="${item.produto.nome}">Produto</td>
+            <td th:text="${item.quantidade}">1</td>
+            <td th:text="${'R$ ' + #numbers.formatDecimal(item.subtotal, 1, 2)}">R$ 0,00</td>
+            <td>
+                <form method="post" th:action="@{/carrinho/remover/{id}(id=${item.produto.id})}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="card" th:unless="${#lists.isEmpty(itens)}" style="text-align:right; margin-top:20px;">
+        <p style="font-size:1.2rem; margin:0 0 12px 0;">
+            <strong>Total: <span th:text="${'R$ ' + #numbers.formatDecimal(total, 1, 2)}">R$ 0,00</span></strong>
+        </p>
+        <form method="post" th:action="@{/carrinho/finalizar}">
+            <button type="submit" class="btn btn-primary">Finalizar compra</button>
+        </form>
+    </div>
+</div>
+
+<footer class="site-footer">
+    FIAP · TDS · Checkpoint 5 — Parte 2 · Mercado Express
+</footer>
+
+</body>
+</html>

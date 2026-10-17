@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas compras — Mercado Express</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/}">Mercado Express</a>
+    <nav>
+        <a th:href="@{/mercado}">Catálogo</a>
+        <a th:href="@{/minhas-compras}">Minhas compras</a>
+        <form class="logout-form" th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-link">Sair</button>
+        </form>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="page-title">
+        <h1>Minhas compras</h1>
+        <a class="btn btn-secondary btn-sm" th:href="@{/minhas-compras}">Atualizar status</a>
+    </div>
+
+    <div class="alert alert-success" th:if="${mensagemSucesso}" th:text="${mensagemSucesso}"></div>
+
+    <p style="color:var(--text-muted); margin-top:-8px;">
+        O status muda de <strong>PENDENTE</strong> para <strong>CONFIRMADA</strong> ou <strong>RECUSADA</strong>
+        assim que o Banco Tranquilo processa o pagamento (geralmente poucos segundos) — clique em "Atualizar status"
+        para ver o resultado mais recente.
+    </p>
+
+    <div th:if="${#lists.isEmpty(compras)}" class="empty-state">
+        Você ainda não fez nenhuma compra. <a th:href="@{/mercado}">Ver catálogo</a>
+    </div>
+
+    <table th:unless="${#lists.isEmpty(compras)}">
+        <thead>
+        <tr>
+            <th>Pedido</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Valor total</th>
+            <th>Status</th>
+            <th>Data</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="compra : ${compras}">
+            <td th:text="${'#' + compra.id}">#1</td>
+            <td th:text="${compra.produto.nome}">Produto</td>
+            <td th:text="${compra.quantidade}">1</td>
+            <td th:text="${'R$ ' + #numbers.formatDecimal(compra.valorTotal, 1, 2)}">R$ 0,00</td>
+            <td>
+                <span class="status-badge"
+                      th:classappend="${compra.status.name() == 'PENDENTE'} ? 'status-pendente' : (${compra.status.name() == 'CONFIRMADA'} ? 'status-confirmada' : 'status-recusada')"
+                      th:text="${compra.status}">PENDENTE</span>
+            </td>
+            <td th:text="${#temporals.format(compra.dataCompra, 'dd/MM/yyyy HH:mm')}">data</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer class="site-footer">
+    FIAP · TDS · Checkpoint 5 — Parte 2 · Mercado Express
+</footer>
+
+</body>
+</html>

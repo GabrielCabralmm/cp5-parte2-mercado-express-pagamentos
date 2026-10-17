@@ -1,0 +1,31 @@
+# Este arquivo é apenas um EXEMPLO de como as variáveis de ambiente abaixo
+# devem ser preenchidas. O application.yml real do projeto já usa a sintaxe
+# ${DB_URL} etc. (sem nenhum valor sensível), então ele pode ficar público
+# no Git normalmente.
+#
+# Ao rodar localmente, configure estas variáveis de ambiente na sua IDE
+# (Run Configuration -> Environment Variables) com os dados do seu banco
+# PostgreSQL (ex.: Render PostgreSQL):
+#
+# DB_URL=jdbc:postgresql://SEU_HOST:5432/SEU_BANCO
+# DB_USERNAME=SEU_USUARIO
+# DB_PASSWORD=SUA_SENHA
+#
+# Opcionais (tem valor padrao se nao forem definidas):
+# ADMIN_EMAIL=admin@mercadoexpress.com
+# ADMIN_PASSWORD=admin123
+# ADMIN_NOME=Administrador
+# PORT=8084
+#
+# RabbitMQ (CP5 Parte 2) - se estiver usando o Docker local padrao, nao
+# precisa definir nada, os valores default ja apontam pra ele:
+# RABBITMQ_HOST=localhost
+# RABBITMQ_PORT=5672
+# RABBITMQ_USERNAME=guest
+# RABBITMQ_PASSWORD=guest
+#
+# SMTP / Mailtrap (CP5 Parte 2) - credenciais da sua caixa de testes Mailtrap
+# (Email Testing -> Inbox -> SMTP Settings -> Nodemailer/Transactional):
+# MAIL_USERNAME=SEU_USUARIO_MAILTRAP
+# MAIL_PASSWORD=SUA_SENHA_MAILTRAP
+# MAIL_REMETENTE=contato@mercadoexpress.com

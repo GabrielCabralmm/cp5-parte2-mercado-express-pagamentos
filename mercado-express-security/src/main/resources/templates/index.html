@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Mercado Express</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/}">Mercado Express</a>
+    <nav>
+        <a th:href="@{/mercado}">Catálogo</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Entrar</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/cadastro}">Cadastre-se</a>
+        <a sec:authorize="isAuthenticated() and !hasRole('ADMIN')" th:href="@{/area}">Minha área</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Painel admin</a>
+        <form class="logout-form" th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-link">Sair</button>
+        </form>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Mercado Express</h1>
+    <p>
+        A forma mais rápida de consultar e gerenciar o catálogo de produtos do
+        seu mercado — com login seguro, cadastro próprio e áreas de acesso
+        diferentes para clientes e administradores.
+    </p>
+    <div class="hero-actions">
+        <a class="btn btn-primary" th:href="@{/mercado}">Ver catálogo</a>
+        <a sec:authorize="!isAuthenticated()" class="btn btn-outline" th:href="@{/login}">Entrar</a>
+        <a sec:authorize="!isAuthenticated()" class="btn btn-outline" th:href="@{/cadastro}">Criar conta</a>
+    </div>
+</section>
+
+<div class="container">
+    <div class="features">
+        <div class="feature-card">
+            <h3>Catálogo público</h3>
+            <p>Qualquer visitante pode consultar os produtos cadastrados, sem precisar de login.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Login seguro</h3>
+            <p>Autenticação própria, com senha protegida (hash) e validada diretamente no banco de dados.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Dois níveis de acesso</h3>
+            <p>Usuários comuns acessam sua área pessoal; administradores têm um painel completo de gestão.</p>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    FIAP · TDS · Checkpoint 5 — Parte 1 · Mercado Express
+</footer>
+
+</body>
+</html>

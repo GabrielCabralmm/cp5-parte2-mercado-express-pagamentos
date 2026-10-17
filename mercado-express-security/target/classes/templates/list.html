@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo — Mercado Express</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/}">Mercado Express</a>
+    <nav>
+        <a th:href="@{/mercado}">Catálogo</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Entrar</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/cadastro}">Cadastre-se</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/carrinho}">Carrinho</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/minhas-compras}">Minhas compras</a>
+        <a sec:authorize="isAuthenticated() and !hasRole('ADMIN')" th:href="@{/area}">Minha área</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Painel admin</a>
+        <form class="logout-form" th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-link">Sair</button>
+        </form>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="page-title">
+        <h1>Catálogo de produtos</h1>
+        <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/mercado/novo}">+ Novo produto</a>
+    </div>
+
+    <div class="alert alert-success" th:if="${mensagemSucesso}" th:text="${mensagemSucesso}"></div>
+
+    <div th:if="${#lists.isEmpty(produtos)}" class="empty-state">
+        Nenhum produto cadastrado ainda.
+    </div>
+
+    <table th:unless="${#lists.isEmpty(produtos)}">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Setor</th>
+            <th>Tamanho</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="produto : ${produtos}">
+            <td th:text="${produto.nome}">Nome</td>
+            <td th:text="${produto.tipo}">Tipo</td>
+            <td th:text="${produto.setor}">Setor</td>
+            <td th:text="${produto.tamanho}">Tamanho</td>
+            <td th:text="${'R$ ' + #numbers.formatDecimal(produto.preco, 1, 2)}">R$ 0,00</td>
+            <td th:text="${produto.estoque}">0</td>
+            <td class="actions-cell">
+                <a class="btn btn-secondary btn-sm" th:href="@{/mercado/{id}(id=${produto.id})}">Ver</a>
+                <a sec:authorize="isAuthenticated()" class="btn btn-primary btn-sm"
+                   th:href="@{/carrinho/adicionar/{id}(id=${produto.id})}">Comprar</a>
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-secondary btn-sm"
+                   th:href="@{/mercado/{id}/editar(id=${produto.id})}">Editar</a>
+                <form sec:authorize="hasRole('ADMIN')" method="post"
+                      th:action="@{/mercado/{id}/excluir(id=${produto.id})}"
+                      onsubmit="return confirm('Tem certeza que deseja excluir este produto?');"
+                      style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer class="site-footer">
+    FIAP · TDS · Checkpoint 5 — Parte 1 · Mercado Express
+</footer>
+
+</body>
+</html>

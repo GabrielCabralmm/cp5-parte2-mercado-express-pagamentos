@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${produto.id} != null ? 'Editar produto' : 'Novo produto'">Formulário — Mercado Express</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/}">Mercado Express</a>
+    <nav>
+        <a th:href="@{/mercado}">Catálogo</a>
+        <a th:href="@{/admin}">Painel admin</a>
+        <a th:href="@{/logout}">Sair</a>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="page-title">
+        <h1 th:text="${produto.id} != null ? 'Editar produto' : 'Novo produto'">Formulário</h1>
+    </div>
+
+    <div class="card">
+        <form th:action="@{/mercado/salvar}" th:object="${produto}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" th:field="*{nome}">
+                <div class="field-error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="tipo">Tipo</label>
+                <input type="text" id="tipo" th:field="*{tipo}">
+            </div>
+
+            <div class="form-group">
+                <label for="setor">Setor</label>
+                <input type="text" id="setor" th:field="*{setor}">
+            </div>
+
+            <div class="form-group">
+                <label for="tamanho">Tamanho</label>
+                <input type="text" id="tamanho" th:field="*{tamanho}">
+            </div>
+
+            <div class="form-group">
+                <label for="preco">Preço de venda</label>
+                <input type="number" step="0.01" id="preco" th:field="*{preco}">
+                <div class="field-error" th:if="${#fields.hasErrors('preco')}" th:errors="*{preco}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="custo">Custo (para cálculo de lucro no dashboard)</label>
+                <input type="number" step="0.01" id="custo" th:field="*{custo}">
+            </div>
+
+            <div class="form-group">
+                <label for="estoque">Estoque</label>
+                <input type="number" step="1" id="estoque" th:field="*{estoque}">
+                <div class="field-error" th:if="${#fields.hasErrors('estoque')}" th:errors="*{estoque}"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a class="btn btn-secondary" th:href="@{/mercado}">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+<footer class="site-footer">
+    FIAP · TDS · Checkpoint 5 — Parte 1 · Mercado Express
+</footer>
+
+</body>
+</html>
