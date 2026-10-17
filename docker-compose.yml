@@ -1,0 +1,26 @@
+version: "3.8"
+
+# Sobe o RabbitMQ (com o Dashboard de gerenciamento) usado pelos dois
+# projetos do CP5 Parte 2: mercado-express-security e banco-tranquilo-pagamentos.
+#
+# Como usar:
+#   docker compose up -d
+#
+# Dashboard de gerenciamento: http://localhost:15672 (usuario: guest / senha: guest)
+# Porta AMQP (usada pelas aplicacoes Spring Boot): 5672
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-mercado-express
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
