@@ -1,0 +1,145 @@
+{
+  "info": {
+    "name": "CP5 Parte 2 - Mercado Express (Compras assincronas)",
+    "description": "Colecao para testar o fluxo assincrono de compras do CP5 Parte 2: publica um pedido de compra via POST, que e processado via RabbitMQ pelo microsservico banco-tranquilo-pagamentos, e depois consultado via GET para observar a transicao de status PENDENTE -> CONFIRMADA/RECUSADA.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8084",
+      "type": "string"
+    },
+    {
+      "key": "compraId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Criar nova compra (POST)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "const jsonData = pm.response.json();",
+              "pm.collectionVariables.set(\"compraId\", jsonData.id);",
+              "",
+              "pm.test(\"Status inicial e PENDENTE\", function () {",
+              "    pm.expect(jsonData.status).to.eql(\"PENDENTE\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"produtoId\": 1,\n  \"quantidade\": 2,\n  \"nomeComprador\": \"Gabriel Cabral\",\n  \"emailComprador\": \"rm563230@fiap.com.br\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/compras",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "compras"]
+        },
+        "description": "Cria uma nova compra (status inicial PENDENTE) e publica a mensagem na fila fila.pedidos.compra do RabbitMQ. Ajuste produtoId para o id de um produto que exista no seu catalogo."
+      }
+    },
+    {
+      "name": "2. Consultar status da compra (GET por id)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const jsonData = pm.response.json();",
+              "console.log(\"Status atual da compra:\", jsonData.status);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/compras/{{compraId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "compras", "{{compraId}}"]
+        },
+        "description": "Consulta o status atual da compra criada na requisicao anterior. Rode essa requisicao algumas vezes (poucos segundos de intervalo) para observar o status mudar de PENDENTE para CONFIRMADA ou RECUSADA, assim que o microsservico banco-tranquilo-pagamentos processar a mensagem."
+      }
+    },
+    {
+      "name": "3. Listar todas as compras (GET)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/compras",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "compras"]
+        },
+        "description": "Lista todas as compras ja registradas, ordenadas da mais recente para a mais antiga."
+      }
+    },
+    {
+      "name": "4. Compra com produto inexistente (erro 404 esperado)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 404 Not Found\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"Corpo contem campo erro\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property(\"erro\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"produtoId\": 99999,\n  \"quantidade\": 1,\n  \"nomeComprador\": \"Teste Erro\",\n  \"emailComprador\": \"teste@exemplo.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/compras",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "compras"]
+        },
+        "description": "Testa o tratamento de erro (CompraApiExceptionHandler) ao tentar comprar um produto que nao existe no catalogo."
+      }
+    }
+  ]
+}
