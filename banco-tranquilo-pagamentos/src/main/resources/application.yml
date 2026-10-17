@@ -1,0 +1,15 @@
+server:
+  port: ${PORT:8085}
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: banco-tranquilo-pagamentos
+
+  # RabbitMQ - mesmo broker usado pelo mercado-express-security. Padrao
+  # aponta para o Docker local (rabbitmq:3-management).
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
